@@ -1,4 +1,5 @@
 import express from 'express';
+import { createActivities, deleteActivity, editActivity } from '../controller/activityController.js';
 import { createActivitiesToSubject } from '../controller/subjectController.js';
 import {
   createTeacherWithSubject,
@@ -6,10 +7,12 @@ import {
   getSubjectTeacherById,
   createSubjectByTeacherId,
   loginTeacher,
-  removeStudent
+  removeStudent,
+  unenrollSubject
 } from '../controller/teacherController.js';
 import verifyToken from '../middleware/authMiddleware.js';
-import { roleGuard } from '../middleware/roleguard.js';
+import { roleGuard } from '../middleware/roleGuard.js';
+
 
 
 
@@ -25,7 +28,10 @@ router.post('/login', loginTeacher);
 
 // Create teacher with subjects
 // http://localhost:5001/api/teacher/
-router.post('/', verifyToken, roleGuard('teacher'), createTeacherWithSubject);
+router.post('/', createTeacherWithSubject);
+
+
+
 
 // Create subject by teacher ID
 // http://localhost:5001/api/teacher/:teacherId/subjects
@@ -34,15 +40,21 @@ router.post('/:teacherId/subjects', verifyToken, roleGuard('teacher'), createSub
 router.post('/:teacherId/activity', createActivitiesToSubject)
 
 // routes/teacherRoutes.js
-router.delete("/students", verifyToken, roleGuard('teacher'), removeStudent);
+router.delete("/student/unenroll", verifyToken, roleGuard('teacher'), removeStudent);
 
 // Get all teachers with subjects
 // http://localhost:5001/api/teacher/
 router.get('/', verifyToken, roleGuard('teacher'), getAllSubjectTeacher);
 
 // Get teacher by ID
-router.get('/me',verifyToken, roleGuard('teacher'), getSubjectTeacherById)
 // http://localhost:5001/api/teacher/:id
 router.get('/:id', verifyToken, roleGuard('teacher'), getSubjectTeacherById);
+
+router.post('/remove-subject', verifyToken, roleGuard('teacher'), unenrollSubject)
+
+// Activty Routes
+router.post('/:subjectId/create-activity', verifyToken, roleGuard('teacher'), createActivities)
+router.put('/:id/edit-activity', verifyToken, roleGuard('teacher'), editActivity)
+router.post('/:activityId/delete-activity', verifyToken, roleGuard('teacher'), deleteActivity)
 
 export default router;

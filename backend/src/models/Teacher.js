@@ -35,6 +35,13 @@ const teacherSchema = new mongoose.Schema({
           ref: 'Subject',  // ✅ make sure this matches your model name
         }
       ],
+
+    activity: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Activity"
+      }
+    ]  
 },{timestamps:true})
 
 

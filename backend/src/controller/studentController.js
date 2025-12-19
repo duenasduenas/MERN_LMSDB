@@ -89,6 +89,12 @@ export async function enrollStudent(req, res) {
     try {
       const student = await Student.findById(studentId).populate('subject');
       const subject = await Subject.findOne({ code });
+
+      if(!subject.isActive){
+        return res.status(403).json({
+            message: "Enrollment is closed for this subject"
+        })
+      }
   
       if (!student || !subject) 
         return res.status(404).json({ message: "Student or Subject not found" });
@@ -120,35 +126,5 @@ export async function enrollStudent(req, res) {
   }
   
 
-  export async function   unenrollSubject(req, res) {
-    const studentId = req.user.id;
-    const { code } = req.body;
-  
-    try {
-      // Find student and subject
-      const student = await Student .findById(studentId).populate({
-        path: 'subject',
-        select: 'subject code teacher' // <- must include code
-      });
-      const subject = await Subject.findOne({ code });
-  
-      if (!student || !subject) {
-        return res.status(404).json({ message: "Student or Subject not found" });
-      }
-  
-      // Remove the subject from student's subject
-      student.subject = student.subject.filter(subj => subj._id.toString() !== subject._id.toString());
-  
-      // Remove the student from subject's student
-      subject.student = subject.student.filter(id => id.toString() !== studentId);
-  
-      // Save both
-      await student.save();
-      await subject.save();
-  
-      res.json({ message: "Unenrolled successfully", student, subject });
-    } catch (err) {
-      res.status(500).json({ message: err.message });
-    }
-  }
+
   

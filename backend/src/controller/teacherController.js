@@ -1,8 +1,13 @@
+import bcrypt from 'bcryptjs';
+import { io } from "../server.js";
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+
 import Teacher from '../models/Teacher.js'
 import Subject from '../models/Subject.js'
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import Student from '../models/Student.js';
+
+
 
 export async function createTeacherWithSubject(req,res){
     try{
@@ -146,40 +151,127 @@ export async function getSubjectTeacherById(req,res){
 export async function removeStudent(req, res) {
   try {
     const teacherId = req.user.id.toString();
-    const studentId = req.body.id;
+    const { studentId, subjectId } = req.body;
 
-    const teacher = await Teacher.findById(teacherId);
+    console.log("REQ BODY:", req.body);
+
+    // validate ids
+    if (!studentId || !subjectId
+        || !mongoose.Types.ObjectId.isValid(studentId)
+        || !mongoose.Types.ObjectId.isValid(subjectId)) {
+      return res.status(400).json({ message: "Invalid studentId or subjectId" });
+    }
+
+    // Find subject and check ownership (teacher)
+    const subject = await Subject.findById(subjectId);
+    if (!subject) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+    if (subject.teacher?.toString() !== teacherId) {
+      return res.status(403).json({ message: "You are not authorized to modify this subject" });
+    }
+
+    // Find student
     const student = await Student.findById(studentId);
-
-    if (!teacher || !student) {
-      return res.status(400).json({
-        message: "Teacher or Student not found",
-        teacher,
-        student
-      });
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
     }
 
-    // Fix: handle populated OR unpopulated student list
-    teacher.student = teacher.student.filter((stud) => {
-      const id = stud?._id?.toString() || stud.toString();
-      return id !== studentId;
-    });
+    // Ensure arrays exist
+    subject.student = subject.student || []; // your schema uses `student` array
+    student.subject = student.subject || [];
+    student.teacher = student.teacher || [];
 
-    // Remove teacher reference from student
-    if (Array.isArray(student.teacher)) {
-      student.teacher = student.teacher.filter(
-        (t) => t.toString() !== teacherId
-      );
-    } else if (student.teacher?.toString() === teacherId) {
-      student.teacher = null;
-    }
+    // 1) Remove student from subject.student
+    const beforeCount = subject.student.length;
+    subject.student = subject.student.filter(sid => sid.toString() !== studentId);
+    const afterCount = subject.student.length;
 
-    await teacher.save();
+    // 2) Remove subjectId from student.subject
+    student.subject = student.subject.filter(sid => sid.toString() !== subjectId);
+
+    // Save subject and student
+    await subject.save();
     await student.save();
 
-    return res.json({ message: "Student Removed", teacher, student });
+    // 3) Optional cleanup: if the student is no longer in ANY subject taught by this teacher,
+    //    remove the teacher <-> student relationship.
+    //    Find whether the student still has any subject whose teacher is teacherId.
+    const remainingSubjectWithThisTeacher = await Subject.exists({
+      _id: { $in: student.subject },
+      teacher: teacherId
+    });
 
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    let teacherChanged = false;
+    let teacher = null;
+
+    if (!remainingSubjectWithThisTeacher) {
+      // Remove teacher reference from student.teacher
+      student.teacher = student.teacher.filter(t => t.toString() !== teacherId);
+      await student.save();
+
+      // Also remove student from teacher.student if present
+      teacher = await Teacher.findById(teacherId);
+      if (teacher) {
+        teacher.student = teacher.student || [];
+        const prevLen = teacher.student.length;
+        teacher.student = teacher.student.filter(sid => sid.toString() !== studentId);
+        if (teacher.student.length !== prevLen) {
+          teacherChanged = true;
+          await teacher.save();
+        }
+      }
+    } else {
+      // if relationship remains, optionally populate teacher for return if you want
+      teacher = await Teacher.findById(teacherId);
+    }
+
+      io.to(subjectId).emit("student-unenrolled", {
+        subjectId,
+        studentId,
+      });
+
+    return res.json({
+      message: "Student unenrolled from subject",
+      subject,
+      student,
+      teacher: teacherChanged || teacher ? teacher : undefined
+    });
+  } catch (err) {
+    console.error("Error unenrolling student:", err);
+    return res.status(500).json({ message: err.message });
   }
 }
+
+
+  export async function  unenrollSubject(req, res) {
+    const teacherId = req.user.id;
+    const { code } = req.body;
+  
+    try {
+      // Find student and subject
+      const teacher = await Teacher.findById(teacherId).populate({
+        path: 'subject',
+        select: 'subject code student' // <- must include code
+      });
+      const subject = await Subject.findOne({ code });
+  
+      if (!teacher || !subject) {
+        return res.status(404).json({ message: "Student or Subject not found" });
+      }
+  
+      // Remove the subject from student's subject
+      teacher.subject = teacher.subject.filter(subj => subj._id.toString() !== subject._id.toString());
+  
+      // Remove the student from subject's student
+      subject.student = subject.student.filter(id => id.toString() !== teacherId);
+  
+      // Save both
+      await teacher.save();
+      await subject.save();
+  
+      res.json({ message: "Unenrolled successfully", teacher, subject });
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+  }

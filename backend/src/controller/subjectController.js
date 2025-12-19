@@ -42,13 +42,28 @@ export async function getSubjectById(req,res){
     }
 }
 
-// export async function toggleEnrollement(req,res){
-//     const { code } = req.body;
+export async function toggleEnrollement(req,res){
+        const {subjectId} = req.body;
 
-//     try{
-//         const = await Subject.findById(id)
-//     }
-// }
+    try{
+        const subject = await Subject.findById(subjectId)
+
+        if(!subject) return res.status(400).json({message: "Subject Not Found"})
+        
+            
+        subject.isActive =!subject.isActive
+        
+        await subject.save()
+
+        return res.status(200).json({
+            message: subject.isActive,
+            subject
+        })
+
+    } catch (error){
+        res.status(500).json({message: error.message})
+    }
+}
 
 export async function addStudentToSubject(req,res){
     const teacherId = req.user.id;
@@ -129,7 +144,7 @@ export async function editSubject(req, res) {
         res.status(200).json({message: "Subject Editted", editSubject})
         
 
-    } catch (error){
+    } catch (error){    
         res.status(500)
     }
 }

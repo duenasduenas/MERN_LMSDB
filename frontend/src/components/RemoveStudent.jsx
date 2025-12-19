@@ -1,27 +1,27 @@
 import axios from "axios";
+import handleRemoveLocal from "./HandleRemoveLocal";
 
-async function removeStudent(studentId, onRemove) {
-    try{
-        const [subject, setSubject] = useState({ students: [] });
-        const token = localStorage.getItem("token");
+export default async function removeStudent(studentId, subjectId, onSuccess) {
+  try {
+    const token = localStorage.getItem("token");
 
-        const res = await axios.delete(
-        "http://localhost:5001/api/teacher/students",
-        {
-            headers: {
-            Authorization: `Bearer ${token}`,
-            },
-            data: { id: studentId }, // axios requires "data" for DELETE body
-        }
-        );
+    const res = await axios.delete(
+      "http://localhost:5001/api/teacher/student/unenroll",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        data: { studentId, subjectId }, // IMPORTANT
+      }
+    );
 
-        if (onRemove) onRemove(studentId);
+    console.log("Server response:", res.data);
 
-        console.log("Removed:", res.data);
-        alert("Student Removed!");
-    } catch (error){
-        console.error(error.response?.data || error.message)
-    }
+
+    handleRemoveLocal(studentId);
+    alert("Student removed successfully!");
+    
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    alert(err.response?.data?.message || "There is an error here but still works tho :)");
+    window.location.href = '/teacher/dashboard'
+  }
 }
-
-export default removeStudent

@@ -7,11 +7,14 @@ import LogInPage from "./auth/LogInPage";
 import RoleGuard from "./lib/roleguard";
 import TeacherDashboard from "./Teacher/TeacherDashboard";
 import HomePage from "./pages/HomePage";
-import SubjectPage from "./components/SubjectPage";
-import SubjectCard from "./components/SubjectCard";
+import SubjectPage from "./Student/SubjectPage"
+import SubjectCard from "./Teacher/SubjectCard";
 import GoogleAuthHandler from "./pages/GoogleAuthHandler";
 import EditSubject from "./components/EditSubject"; // import your component
 import CreateSubjectWrapper from "./wrappers/CreateSubjectWrapper";
+import TeacherSignup from "./Teacher/TeacherSignup";
+import StudentSignup from "./Student/StudentSignup";
+import SignupSelect from "./pages/SignUp";
 
 function App() {
   return (
@@ -36,6 +39,7 @@ function App() {
             </RoleGuard>
           }
         />
+        <Route path="/signup/teacher" element={<TeacherSignup />} />
 
         <Route
           path="/create-subject/:teacherId"
@@ -45,6 +49,7 @@ function App() {
             </RoleGuard>
           }
         />
+        <Route path="/signup/student" element={<StudentSignup />} />
 
 
         {/* Subject routes */}
@@ -61,6 +66,7 @@ function App() {
         <Route path="/enroll" element={<EnrollPage />} />
         <Route path="/login" element={<LogInPage />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/signup" element={<SignupSelect />} />
       </Routes>
     </>
   );

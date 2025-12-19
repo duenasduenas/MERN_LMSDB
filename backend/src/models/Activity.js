@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
-const ActivitySchema = new mongoose.Schema({
+const activitySchema = new mongoose.Schema({
     activity:{
         type:String
     },
@@ -8,8 +9,18 @@ const ActivitySchema = new mongoose.Schema({
     teacher: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Teacher"
+    }],
+
+    student: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Student"
+    }],
+
+    subject: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subject"
     }]
 }, {timestamps: true})
 
-const Activity = mongoose.model('Activity', ActivitySchema)
+const Activity = mongoose.model('Activity', activitySchema)
 export default Activity;

@@ -12,6 +12,11 @@ const subjectSchema = new mongoose.Schema({
     student: [{ type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
      }],
+
+     activity: [{ type: mongoose.Schema.Types.ObjectId,
+        ref: "Activity"
+     }],
+     
      isActive: {type: Boolean, default: true  }
      
   });
