@@ -28,8 +28,8 @@ export async function deleteSubject(req,res) {
 export async function getSubjectById(req,res){
     try{
         const subject = await Subject.findById(req.params.id)
-            .populate({path: "student teacher",
-                select: "name"
+            .populate({path: "student teacher activity",
+                select: "name activity"
             });
         
         if(!subject) {

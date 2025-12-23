@@ -15,6 +15,7 @@ import CreateSubjectWrapper from "./wrappers/CreateSubjectWrapper";
 import TeacherSignup from "./Teacher/TeacherSignup";
 import StudentSignup from "./Student/StudentSignup";
 import SignupSelect from "./pages/SignUp";
+import ActivityPage from "./components/activity/ActivityPage";
 
 function App() {
   return (
@@ -61,6 +62,9 @@ function App() {
           path="/edit-subject/:id"
           element={<EditSubjectWrapper />}
         />
+
+        {/* Acivity Routes */}
+        <Route path="/activity/:id" element={<ActivityPage />} />
 
         <Route path="/auth/google/callback" element={<GoogleAuthHandler />} />
         <Route path="/enroll" element={<EnrollPage />} />

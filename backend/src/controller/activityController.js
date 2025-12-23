@@ -13,6 +13,27 @@ export async function getAllActivities(req, res) {
     }
 }
 
+export async function getActivityById(req, res) {
+    try {
+        const { activityId } = req.params;
+
+        const activity = await Activity.findById(activityId)
+            .populate("subject")  // populate subject details
+            .populate("teacher")  // populate teacher details
+            .populate("student"); // populate students
+
+        if (!activity) {
+            return res.status(404).json({ message: "Activity not found" });
+        }
+
+        res.status(200).json({ activity });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
+
 export async function createActivities(req, res) {
     try {
         // Save Teacher
