@@ -9,6 +9,7 @@ import Student from '../models/Student.js';
 
 
 
+
 export async function createTeacherWithSubject(req,res){
     try{
       const body = req.body;
@@ -151,13 +152,14 @@ export async function getSubjectTeacherById(req,res){
 export async function removeStudent(req, res) {
   try {
     const teacherId = req.user.id.toString();
-    const { studentId, subjectId } = req.body;
+    const { studentId, subjectId, activityId } = req.body;
 
     console.log("REQ BODY:", req.body);
 
     // validate ids
     if (!studentId || !subjectId
         || !mongoose.Types.ObjectId.isValid(studentId)
+        // || !mongoose.Types.ObjectId.isValid(activityId)
         || !mongoose.Types.ObjectId.isValid(subjectId)) {
       return res.status(400).json({ message: "Invalid studentId or subjectId" });
     }
@@ -177,10 +179,16 @@ export async function removeStudent(req, res) {
       return res.status(404).json({ message: "Student not found" });
     }
 
+    // const activity = await Activity.findById(activityId)
+    // if (!activity) {
+    //   return res.status(404).json({ message: "Activity not found" });
+    // }
+
     // Ensure arrays exist
     subject.student = subject.student || []; // your schema uses `student` array
     student.subject = student.subject || [];
     student.teacher = student.teacher || [];
+    // student.activity = student.activity || [];
 
     // 1) Remove student from subject.student
     const beforeCount = subject.student.length;

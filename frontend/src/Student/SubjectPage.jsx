@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { BookOpenIcon, UserIcon, ArrowLeftIcon, LogOutIcon } from "lucide-react";
+import { BookOpenIcon, UserIcon, ArrowLeftIcon, LogOutIcon, PenSquareIcon } from "lucide-react";
 import RemoveSubject from "../components/RemoveSubject";
 
 function SubjectPage() {
@@ -92,15 +92,43 @@ function SubjectPage() {
           </div>
         </div>
 
-        {/* Assignments Placeholder */}
-        {/* <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Assignments</h3>
-          <div className="text-center py-12">
-            <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">No assignments yet.</p>
-            <p className="text-gray-400 mt-2">Assignments will appear here when posted by your teacher.</p>
-          </div>
-        </div> */}
+          {subject.activity && subject.activity.length > 0 ? (
+            <div className="space-y-4">
+              {subject.activity.map((act) => (
+                <Link
+                  key={act._id}
+                  to={`/submit-activity/${act._id}`}
+                  className="group block border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <BookOpenIcon className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 group-hover:text-blue-600">{act.activity}</p>
+                        <p className="text-sm text-gray-400">
+                          Posted {new Date(act.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    
+
+                  </div>
+
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <BookOpenIcon className="w-14 h-14 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg">No activities yet</p>
+              <p className="text-gray-400 mt-1">Create an activity to start classwork</p>
+            </div>
+          )}
+
+
+
       </main>
     </div>
   );

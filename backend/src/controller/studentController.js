@@ -124,7 +124,6 @@ export async function enrollStudent(req, res) {
       res.status(500).json({ message: err.message });
     }
   }
-  
 
 
-  
+

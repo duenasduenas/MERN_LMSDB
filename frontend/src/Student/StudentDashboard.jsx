@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { BookOpenIcon, PlusIcon, LogOutIcon, UserIcon, SearchIcon } from "lucide-react";
-import socket from "../socket";
-import useStudentSocket from "../hooks/useStudentSocket";
+// import socket from "../socket";
+// import useStudentSocket from "../hooks/useStudentSocket";
 
 
 function StudentDashboard() {
@@ -37,26 +37,26 @@ function StudentDashboard() {
   }, [navigate]);
 
   
-    useEffect(() => {
-      if (!student?.subject?.length) return;
+    // useEffect(() => {
+    //   if (!student?.subject?.length) return;
 
-      const joinRooms = () => {
-        student.subject.forEach((subj) => {
-          console.log("📡 Joining subject room:", subj._id);
-          socket.emit("join-subject", subj._id);
-        });
-      };
+    //   const joinRooms = () => {
+    //     student.subject.forEach((subj) => {
+    //       console.log("📡 Joining subject room:", subj._id);
+    //       socket.emit("join-subject", subj._id);
+    //     });
+    //   };
 
-      if (socket.connected) {
-        joinRooms();
-      } else {
-        socket.on("connect", joinRooms);
-      }
+    //   if (socket.connected) {
+    //     joinRooms();
+    //   } else {
+    //     socket.on("connect", joinRooms);
+    //   }
 
-      return () => {
-        socket.off("connect", joinRooms);
-      };
-    }, [student.subject]);
+    //   return () => {
+    //     socket.off("connect", joinRooms);
+    //   };
+    // }, [student.subject]);
 
 
 
@@ -93,7 +93,7 @@ function StudentDashboard() {
       setEnrolling(false);
     }
 
-    useStudentSocket(setStudent);
+    // useStudentSocket(setStudent);
   };
 
   if (loading) {

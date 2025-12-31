@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ToggleEnrollement from "../components/ToggleEnrollment.jsx";
 import removeStudent from "../components/RemoveStudent.jsx";
 import UnenrollBtn from "../components/RemoveSubject.jsx";
+import DeleteActivity from "../components/activity/DeleteActivity.jsx";
 
 function SubjectCard() {
   const { id } = useParams();
@@ -37,6 +38,8 @@ function SubjectCard() {
     fetchSubject();
   }, [id]);
 
+  
+
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     setUpdating(true);
@@ -54,6 +57,13 @@ function SubjectCard() {
     } finally {
       setUpdating(false);
     }
+  };
+
+  const handleDeleteActivity = (activityId) => {
+    setSubject((prev) => ({
+      ...prev,
+      activity: prev.activity.filter((a) => a._id !== activityId),
+    }));
   };
 
   const handleRemoveLocal = (studentId) => {
@@ -226,8 +236,17 @@ function SubjectCard() {
                         </p>
                       </div>
                     </div>
-                    <span className="text-sm font-medium text-blue-600 self-end sm:self-auto">View activity</span>
+                    
+                      <div className="flex flex-row gap-2">
+                          <DeleteActivity
+                            activityId={act._id}
+                            onDelete={handleDeleteActivity}
+                          />
+                          <span className="text-sm font-medium text-blue-600  sm:self-auto">View activity</span>
+                      </div>
+
                   </div>
+
                 </Link>
               ))}
             </div>

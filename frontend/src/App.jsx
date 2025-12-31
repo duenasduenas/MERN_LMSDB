@@ -16,6 +16,9 @@ import TeacherSignup from "./Teacher/TeacherSignup";
 import StudentSignup from "./Student/StudentSignup";
 import SignupSelect from "./pages/SignUp";
 import ActivityPage from "./components/activity/ActivityPage";
+import CreateActivity from "./components/activity/CreateActivity";
+import EditActivity from "./components/activity/EditActivity";
+import SubmitActivty from "./Student/SubmitActivity";
 
 function App() {
   return (
@@ -31,6 +34,8 @@ function App() {
           }
         />
 
+        <Route path="/signup/student" element={<StudentSignup />} />
+
         {/* teacher route */}
         <Route
           path="/teacher/dashboard"
@@ -42,20 +47,13 @@ function App() {
         />
         <Route path="/signup/teacher" element={<TeacherSignup />} />
 
-        <Route
-          path="/create-subject/:teacherId"
-          element={
-            <RoleGuard allowedRoles={"teacher"}>
-              <CreateSubjectWrapper />
-            </RoleGuard>
-          }
-        />
-        <Route path="/signup/student" element={<StudentSignup />} />
+        <Route path="/create-subject/:teacherId" element={<RoleGuard allowedRoles={"teacher"}> <CreateSubjectWrapper /> </RoleGuard>}/>
+        
 
 
         {/* Subject routes */}
         <Route path="/subject-student/:id" element={<SubjectPage />} />
-        <Route path="/subject-teacher/:id" element={<SubjectCard />} />
+        <Route path="/subject-teacher/:id" element={ <RoleGuard allowedRoles={'teacher'}> <SubjectCard /> </RoleGuard> } />
 
         {/* Edit subject route */}
         <Route
@@ -71,6 +69,9 @@ function App() {
         <Route path="/login" element={<LogInPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={<SignupSelect />} />
+        <Route path="/create-activity/:subjectId" element={ <RoleGuard allowedRoles={'teacher'}> <CreateActivity/> </RoleGuard> }/>
+        <Route path="/edit-activity/:activityId" element={<RoleGuard allowedRoles={'teacher'}>  <EditActivity/> </RoleGuard>}/>
+        <Route path="/submit-activity/:activityId" element={<RoleGuard allowedRoles={'student'}> <SubmitActivty/>  </RoleGuard>}/>
       </Routes>
     </>
   );

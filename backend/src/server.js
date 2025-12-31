@@ -12,12 +12,18 @@ import { connectDB } from "./config/db.js";
 
 dotenv.config();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://192.168.18.5:5173",
+  "https://unoffending-shelley-swingingly.ngrok-free.dev"
+]
+
 const app = express();
 const server = http.createServer(app); // ✅ ONE server
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   },
@@ -39,8 +45,17 @@ io.on("connection", (socket) => {
   });
 });
 
+
 // middleware
-app.use(cors());
+// app.use(cors());
+
+// ✅ Replace your current app.use(cors()) with this:
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+
 app.use(express.json());
 
 app.use("/api/student", studentRoutes);

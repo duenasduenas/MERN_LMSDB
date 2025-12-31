@@ -31,6 +31,11 @@ const studentSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Subject"
     }],
+
+    activity: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Activity"
+    }]
    
 }, { timestamps: true })
 

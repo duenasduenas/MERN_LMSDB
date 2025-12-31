@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { BookOpenIcon, UsersIcon } from "lucide-react";
+import { UsersIcon } from "lucide-react";
+import DeleteActivity from "./DeleteActivity";
+import EditActivity from "./EditActivity";
 
 function ActivityPage() {
   const [activity, setActivity] = useState(null);
+  const [subject, setSubject] = useState(null); // Fixed: Now properly declared as state
   const [loading, setLoading] = useState(true);
+
+  const [showEdit, setShowEdit] = useState(false);
+
 
   const activityId = window.location.pathname.split("/").pop();
 
@@ -17,6 +23,7 @@ function ActivityPage() {
         );
         console.log("API Response:", res.data);
         setActivity(res.data.activity);
+        setSubject(res.data.activity.subject?.[0]); // Set subject state here
       } catch (error) {
         console.error(error);
         alert("Failed to fetch activity");
@@ -27,6 +34,13 @@ function ActivityPage() {
 
     fetchActivity();
   }, [activityId]);
+
+  const handleDeleteActivity = (activityId) => {
+    setSubject((prev) => ({
+      ...prev,
+      activity: prev.activity.filter((a) => a._id !== activityId),
+    }));
+  };
 
   if (loading) {
     return (
@@ -50,32 +64,55 @@ function ActivityPage() {
     );
   }
 
-  // Access first element of arrays
-  const subject = activity.subject?.[0];
+  // Access first element of arrays (now using state subject)
   const teacher = activity.teacher?.[0];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-900">{activity.activity}</h1>
+            <h1 className="text-2xl font-semibold text-gray-900">
+              {activity.activity}
+            </h1>
             <span className="inline-block mt-1 px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded-full">
               {subject?.subject || "No Subject"}
             </span>
           </div>
 
-          {subject?._id && (
-            <Link
-              to={`/subject-teacher/${subject._id}`}
-              className="text-blue-600 hover:text-blue-800 font-medium"
-            >
-              ← Back to Class
-            </Link>
-          )}
+          <div className="flex items-center gap-4">
+            {subject?._id && (
+              <Link
+                to={`/subject-teacher/${subject._id}`}
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                ← Back to Class
+              </Link>
+            )}
+            
+            <div className="flex items-center gap-3">
+              <DeleteActivity
+                activityId={activity._id}
+                onDelete={() =>
+                  (window.location.href = `/subject-teacher/${subject._id}`)
+                }
+              />
+
+              <button
+                onClick={() => setShowEdit(true)}
+                className="px-4 py-2 text-sm border rounded-md hover:bg-gray-100"
+              >
+                Edit
+              </button>
+
+
+            </div>
+
+
+          </div>
         </div>
       </header>
+
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-4 py-8 space-y-6">
@@ -111,6 +148,20 @@ function ActivityPage() {
             </ul>
           )}
         </div>
+
+        {showEdit && (
+          <EditActivity
+            activityId={activity._id}
+            onClose={() => setShowEdit(false)}
+            onUpdated={(updatedText) =>
+              setActivity((prev) => ({
+                ...prev,
+                activity: updatedText,
+              }))
+            }
+          />
+        )}
+
       </main>
     </div>
   );

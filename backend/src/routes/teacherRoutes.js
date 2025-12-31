@@ -55,6 +55,6 @@ router.post('/remove-subject', verifyToken, roleGuard('teacher'), unenrollSubjec
 // Activty Routes
 router.post('/:subjectId/create-activity', verifyToken, roleGuard('teacher'), createActivities)
 router.put('/:id/edit-activity', verifyToken, roleGuard('teacher'), editActivity)
-router.post('/:activityId/delete-activity', verifyToken, roleGuard('teacher'), deleteActivity)
+router.delete('/:activityId/delete-activity', verifyToken, roleGuard('teacher'), deleteActivity)
 
 export default router;
