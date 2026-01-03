@@ -21,4 +21,7 @@ router.get('/activity/:activityId', getActivityById)
 
 router.post('/add-student', verifyToken, addStudentToSubject)
 
+
+
+
 export default router;

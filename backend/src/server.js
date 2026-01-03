@@ -8,6 +8,7 @@ import studentRoutes from "./routes/studentRoutes.js";
 import teacherRoutes from "./routes/teacherRoutes.js";
 import subjectRoutes from "./routes/subjectRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import aiRoutes from "./routes/authRoutes.js";
 import { connectDB } from "./config/db.js";
 
 dotenv.config();
@@ -61,6 +62,7 @@ app.use(express.json());
 app.use("/api/student", studentRoutes);
 app.use("/api/teacher", teacherRoutes);
 app.use("/api/subject", subjectRoutes);
+app.use('/api/ai', aiRoutes)
 app.use("/api/auth", authRoutes);
 
 connectDB();
