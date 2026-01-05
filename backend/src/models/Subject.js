@@ -16,6 +16,25 @@ const subjectSchema = new mongoose.Schema({
      activity: [{ type: mongoose.Schema.Types.ObjectId,
         ref: "Activity"
      }],
+
+     lesson: [
+      {
+         filePath: {
+            type: String,
+            required: true
+         },
+         summary: {
+            type: String
+         },
+
+         summaryStatus: { type: String, enum: ['pending','done','failed'], default: 'pending' },
+
+         uploadedAt: {
+            type: Date,
+            default: Date.now
+         }
+      }],
+
      
      isActive: {type: Boolean, default: true  }
      

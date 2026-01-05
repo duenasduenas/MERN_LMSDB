@@ -2,12 +2,14 @@ from fastapi import FastAPI, UploadFile, Form
 from pathlib import Path
 import shutil
 
+from rag import read_file, rag_summarize  # ✅ REQUIRED
+
 app = FastAPI()
 
 @app.post("/rag-summarize")
 async def rag_summarize_api(
     file: UploadFile,
-    query: str = Form("Summarize the key points of this document")
+    query: str = Form("Provide a detailed yet concise summary in 2–10 paragraphs based strictly on the context:")
 ):
     temp_path = Path("temp") / file.filename
     temp_path.parent.mkdir(exist_ok=True)
@@ -16,9 +18,11 @@ async def rag_summarize_api(
         shutil.copyfileobj(file.file, f)
 
     text = read_file(temp_path)
-    answer = rag_summarize(text, query)
+    summary = rag_summarize(text, query)
 
     return {
         "filename": file.filename,
-        "summary": answer
+        "summary": summary
     }
+
+

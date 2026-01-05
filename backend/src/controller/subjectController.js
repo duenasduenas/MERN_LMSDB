@@ -3,6 +3,11 @@ import Subject from "../models/Subject.js";
 import Teacher from "../models/Teacher.js";
 import Activity from "../models/Activity.js";
 
+import { summarizeLessonBackground } from "../services/aiServices.js";
+
+
+
+
 
 export async function getAllSubjects(req,res){
     try{
@@ -148,3 +153,50 @@ export async function editSubject(req, res) {
         res.status(500)
     }
 }
+
+
+
+
+
+
+
+export const uploadLesson = async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ message: "File is required" });
+    }
+
+    // 1️⃣ Find the subject
+    const subject = await Subject.findById(req.params.subjectId);
+    if (!subject) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+
+    // 2️⃣ Save uploaded lessons with 'pending' status
+    const lessonsToSave = req.files.map(file => ({
+      filePath: file.path,
+      summaryStatus: 'pending'
+    }));
+
+    subject.lesson.push(...lessonsToSave);
+    await subject.save();
+
+    // 3️⃣ Trigger background AI summarization (fire-and-forget)
+    lessonsToSave.forEach(lesson => {
+      summarizeLessonBackground(lesson._id, lesson.filePath, subject._id);
+    });
+
+    // 4️⃣ Return response immediately
+    res.status(201).json({
+      message: "Lesson uploaded. Summarization will run in background.",
+      lessons: lessonsToSave
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Upload failed" });
+  }
+};
+
+
+

@@ -114,7 +114,7 @@ def process_file(file_path: Path, output_folder: Path, query: str) -> tuple[str,
 
 
 def main():
-    input_folder = Path("input")
+    input_folder = Path("temp")
     output_folder = Path("output_rag")
     output_folder.mkdir(exist_ok=True)
 
