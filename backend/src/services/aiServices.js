@@ -1,14 +1,16 @@
-// backend/services/aiService.js
-import axios from 'axios';
-import FormData from 'form-data';
-import fs from 'fs';
-import Subject from '../models/Subject.js';
+import axios from "axios";
+import FormData from "form-data";
+import fs from "fs";
+import Subject from "../models/Subject.js";
 
-export const summarizeLessonBackground = async (lessonId, filePath, subjectId) => {
+export const summarizeLesson = async (lessonId, filePath, subjectId) => {
   try {
     const formData = new FormData();
     formData.append("file", fs.createReadStream(filePath));
-    formData.append("query", "Summarize the key points of this lesson for students");
+    formData.append(
+      "query",
+      "Summarize this lesson for undergraduate students"
+    );
 
     const response = await axios.post(
       "http://localhost:8001/rag-summarize",
@@ -26,7 +28,8 @@ export const summarizeLessonBackground = async (lessonId, filePath, subjectId) =
       }
     );
   } catch (err) {
-    console.error("Background summarization failed:", err.message);
+    console.error("Summarization failed:", err.message);
+
     await Subject.updateOne(
       { _id: subjectId, "lesson._id": lessonId },
       { $set: { "lesson.$.summaryStatus": "failed" } }

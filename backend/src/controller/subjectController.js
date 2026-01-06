@@ -2,8 +2,9 @@ import Student from "../models/Student.js";
 import Subject from "../models/Subject.js";
 import Teacher from "../models/Teacher.js";
 import Activity from "../models/Activity.js";
+import fs from "fs";
 
-import { summarizeLessonBackground } from "../services/aiServices.js";
+import { summarizeLesson } from "../services/aiServices.js";
 
 
 
@@ -12,7 +13,7 @@ import { summarizeLessonBackground } from "../services/aiServices.js";
 export async function getAllSubjects(req,res){
     try{
         const subject = await Subject.find().populate({
-            path: "teacher subject code isActive",
+            path: "teacher subject code isActive lesson",
             select: "name"
         }).sort({createdAt: -1})
         res.status(200).json({subject}) 
@@ -156,40 +157,46 @@ export async function editSubject(req, res) {
 
 
 
-
-
-
-
 export const uploadLesson = async (req, res) => {
   try {
+    const { title } = req.body;
+
+    if (!title) {
+      return res.status(400).json({ message: "Lesson title is required" });
+    }
+
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ message: "File is required" });
     }
 
-    // 1️⃣ Find the subject
     const subject = await Subject.findById(req.params.subjectId);
     if (!subject) {
       return res.status(404).json({ message: "Subject not found" });
     }
 
-    // 2️⃣ Save uploaded lessons with 'pending' status
-    const lessonsToSave = req.files.map(file => ({
-      filePath: file.path,
-      summaryStatus: 'pending'
-    }));
-
-    subject.lesson.push(...lessonsToSave);
-    await subject.save();
-
-    // 3️⃣ Trigger background AI summarization (fire-and-forget)
-    lessonsToSave.forEach(lesson => {
-      summarizeLessonBackground(lesson._id, lesson.filePath, subject._id);
+    // 1️⃣ Push lesson WITH TITLE
+    req.files.forEach(file => {
+      subject.lesson.push({
+        title: title,
+        filePath: file.path,
+        summaryStatus: "pending"
+      });
     });
 
-    // 4️⃣ Return response immediately
+    // 2️⃣ Save (MongoDB assigns _id)
+    await subject.save();
+
+    // 3️⃣ Get saved lessons
+    const addedLessons = subject.lesson.slice(-req.files.length);
+
+    // 4️⃣ Background summarization
+    addedLessons.forEach(lesson => {
+      summarizeLesson(lesson._id, lesson.filePath, subject._id);
+    });
+
     res.status(201).json({
-      message: "Lesson uploaded. Summarization will run in background.",
-      lessons: lessonsToSave
+      message: "Lesson uploaded. Summarization in progress.",
+      lessons: addedLessons
     });
 
   } catch (err) {
@@ -197,6 +204,7 @@ export const uploadLesson = async (req, res) => {
     res.status(500).json({ message: "Upload failed" });
   }
 };
+
 
 
 

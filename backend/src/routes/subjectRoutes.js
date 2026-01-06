@@ -23,7 +23,7 @@ router.get('/activity/:activityId', getActivityById)
 router.post('/add-student', verifyToken, addStudentToSubject)
 
 // Upload Lesson Route
-router.post('/upload-lesson/:subjectId', verifyToken, roleGuard('teacher'), upload.array("lesson"), uploadLesson)
+router.post('/upload-lesson/:subjectId', verifyToken, roleGuard('teacher'), upload.array("files"), uploadLesson)
 
 
 

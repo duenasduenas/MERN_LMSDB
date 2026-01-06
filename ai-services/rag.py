@@ -27,25 +27,37 @@ def clean_text(text: str) -> str:
 def chunk_text(text: str, max_chunk_length: int = 2500) -> list:
     return [text[i:i+max_chunk_length] for i in range(0, len(text), max_chunk_length)]
 
+def build_prompt(query, context):
+    return f"""
+        You are an academic tutor.
+
+        Task:
+        {query}
+
+        Context:
+        {context}
+
+        Rules:
+        - Use simple language
+        - Use bullet points
+        - No hallucinations
+        """
+
+
 def rag_summarize(document_text: str, query: str) -> str:
     cleaned_text = clean_text(document_text)
     chunks = chunk_text(cleaned_text)
 
-    embedder = SentenceTransformer("all-MiniLM-L6-v2")
-    embeddings = [embedder.encode(chunk) for chunk in chunks]
+    context = chunks[0]  # basic RAG
 
-    prompt = f"""
-    Question: {query}
+    prompt = build_prompt(query, context)  # ✅ use the new function
 
-    Context:
-    {chunks[0]}
-
-    Provide a concise summary.
-    """
+    print("===== PROMPT SENT TO LLM =====")
+    print(prompt)
 
     response = ollama.generate(
         model="gemma3:1b",
         prompt=prompt
     )
 
-    return response["response"]
+    return response.get("response", "").strip()

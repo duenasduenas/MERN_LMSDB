@@ -9,7 +9,7 @@ app = FastAPI()
 @app.post("/rag-summarize")
 async def rag_summarize_api(
     file: UploadFile,
-    query: str = Form("Summarize the key points of this lesson")
+    query: str = Form("Provide a detailed yet concise summary in 2–10 paragraphs based strictly on the context:")
 ):
     temp_path = Path("temp") / file.filename
     temp_path.parent.mkdir(exist_ok=True)

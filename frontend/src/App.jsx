@@ -19,6 +19,7 @@ import ActivityPage from "./components/activity/ActivityPage";
 import CreateActivity from "./components/activity/CreateActivity";
 import EditActivity from "./components/activity/EditActivity";
 import SubmitActivty from "./Student/SubmitActivity";
+import UploadLesson from "./Teacher/UploadLesson";
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         {/* Subject routes */}
         <Route path="/subject-student/:id" element={<SubjectPage />} />
         <Route path="/subject-teacher/:id" element={ <RoleGuard allowedRoles={'teacher'}> <SubjectCard /> </RoleGuard> } />
+        <Route path="/upload-lesson/:id" element={ <RoleGuard allowedRoles={'teacher'}> <UploadLesson /> </RoleGuard>}/>
 
         {/* Edit subject route */}
         <Route
