@@ -162,6 +162,10 @@ function SubjectCard() {
           </div>
         </div>
 
+        <div>
+          <Link to={`/upload-lesson/${id}`}> Upload a lesson </Link>
+        </div>
+
         {/* Students Section */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-6 gap-2">

@@ -35,7 +35,7 @@ export async function getSubjectById(req,res){
     try{
         const subject = await Subject.findById(req.params.id)
             .populate({path: "student teacher activity",
-                select: "name activity createdAt"
+                select: "name activity createdAt lesson"
             });
         
         if(!subject) {
@@ -205,6 +205,22 @@ export const uploadLesson = async (req, res) => {
   }
 };
 
+
+export async function deleteLesson(req,res) {
+    const { subjectId, lessonId } = req.params
+
+    try{
+        
+        await Subject.updateOne(
+            { _id: subjectId },
+            { $pull: {lesson: {_id: lessonId}} }
+        );
+
+        res.status(200).json({message: "Delete Sucessful"})
+    } catch (error) {
+        console.log("Error Lesson Cant Be Deleted")
+    }
+}
 
 
 
