@@ -164,10 +164,11 @@ function SubjectCard() {
 
         <div>
           <Link to={`/upload-lesson/${id}`}> Upload a lesson </Link>
+          <Link to={`/enrolled-students/${id}`}> See Enrolled Students </Link>
         </div>
 
         {/* Students Section */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        {/* <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-6 gap-2">
             <UsersIcon className="w-6 h-6 text-gray-600" />
             <h3 className="text-2xl font-semibold text-gray-900">Enrolled Students</h3>
@@ -201,7 +202,7 @@ function SubjectCard() {
               <p className="text-gray-400 mt-2">Share the subject code to let students join.</p>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Activities Section */}
         <section className="bg-white rounded-lg shadow-md p-6">

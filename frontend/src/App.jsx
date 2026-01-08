@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import StudentDashboard from "./Student/StudentDashboard";
 import { Route, Routes, useParams  } from "react-router";
 import "./App.css";
@@ -10,7 +10,7 @@ import HomePage from "./pages/HomePage";
 import SubjectPage from "./Student/SubjectPage"
 import SubjectCard from "./Teacher/SubjectCard";
 import GoogleAuthHandler from "./pages/GoogleAuthHandler";
-import EditSubject from "./components/EditSubject"; // import your component
+import EditSubject from "./components/EditSubject"; 
 import CreateSubjectWrapper from "./wrappers/CreateSubjectWrapper";
 import TeacherSignup from "./Teacher/TeacherSignup";
 import StudentSignup from "./Student/StudentSignup";
@@ -20,34 +20,26 @@ import CreateActivity from "./components/activity/CreateActivity";
 import EditActivity from "./components/activity/EditActivity";
 import SubmitActivty from "./Student/SubmitActivity";
 import UploadLesson from "./Teacher/UploadLesson";
+import  EnrolledStudents  from "./Teacher/EnrolledStudents";
+import ViewLesson from "./components/lesson/ViewLesson";
 
 function App() {
   return (
     <>
       <Routes>
         {/* student route */}
-        <Route
-          path="/student/dashboard"
-          element={
-            <RoleGuard allowedRoles={"student"}>
-              <StudentDashboard />
-            </RoleGuard>
-          }
-        />
-
+        <Route path="/student/dashboard" element={<RoleGuard allowedRoles={"student"}> <StudentDashboard /> </RoleGuard>}/>
         <Route path="/signup/student" element={<StudentSignup />} />
 
-        {/* teacher route */}
-        <Route
-          path="/teacher/dashboard"
-          element={
-            <RoleGuard allowedRoles={"teacher"}>
-              <TeacherDashboard />
-            </RoleGuard>
-          }
-        />
-        <Route path="/signup/teacher" element={<TeacherSignup />} />
+        {/* View Students Routes */}
+        <Route path="/enrolled-students/:id" element={ <EnrolledStudents /> }/>
 
+        {/* View Lesson Routes */}
+        <Route path="/view-lesson/:id" element={ <ViewLesson /> }/>
+
+        {/* teacher route */}
+        <Route path="/teacher/dashboard" element={<RoleGuard allowedRoles={"teacher"}> <TeacherDashboard /> </RoleGuard>}/>
+        <Route path="/signup/teacher" element={<TeacherSignup />} />
         <Route path="/create-subject/:teacherId" element={<RoleGuard allowedRoles={"teacher"}> <CreateSubjectWrapper /> </RoleGuard>}/>
         
 

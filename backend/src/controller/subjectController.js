@@ -22,6 +22,7 @@ export async function getAllSubjects(req,res){
     }
 }
 
+
 export async function deleteSubject(req,res) {
     try{
         await Subject.findByIdAndDelete(req.params.id);
@@ -210,7 +211,7 @@ export async function deleteLesson(req,res) {
     const { subjectId, lessonId } = req.params
 
     try{
-        
+
         await Subject.updateOne(
             { _id: subjectId },
             { $pull: {lesson: {_id: lessonId}} }
