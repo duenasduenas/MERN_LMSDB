@@ -223,5 +223,30 @@ export async function deleteLesson(req,res) {
     }
 }
 
+export async function getLesson(req, res) {
+  const { subjectId, lessonId } = req.params;
 
+  try {
+    const subject = await Subject.findById(subjectId).select("lesson");
+
+    if (!subject) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+
+    const lesson = subject.lesson.id(lessonId)// 👈 Mongoose subdoc lookup
+
+    if (!lesson) {
+      return res.status(404).json({ message: "Lesson not found" });
+    }
+
+    res.status(200).json({
+      message: "Lesson found",
+      lesson,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: err.message });
+  }
+}
 

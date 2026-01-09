@@ -1,73 +1,81 @@
 import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
-import { BookOpenIcon } from "lucide-react";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-export default function ViewLesson() {
-  const { id } = useParams();
-  const [subject, setSubject] = useState(null);
+function ViewLesson() {
+  const { subjectId, lessonId } = useParams();
+
+  const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    const fetchSubject = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `http://localhost:5001/api/subject/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setSubject(res.data.subject);
-      } catch (error) {
-        console.error(error.response?.data || error.message);
-        alert("Failed to fetch subject");
-      } finally {
-        setLoading(false);
-      }
-    };
+  try{
+      useEffect(() => {
+        const fetchLesson = async () => {
+        try {
+            const res = await axios.get(
+            `http://localhost:5001/api/subject/${subjectId}/view-lesson/${lessonId}`
+            );
+            setLesson(res.data.lesson);
+        } catch (err) {
+            setError(err.response?.data?.message || "Failed to fetch lesson");
+        } finally {
+            setLoading(false);
+        }
+        };
 
-    fetchSubject();
-  }, [id]);
+        fetchLesson();
+    }, [subjectId, lessonId]);
+  } catch (err){
+    navigate(-1)
+  }
 
-  if (loading) return <p className="text-center mt-10">Loading...</p>;
+
+  if (loading) return <p>Loading lesson...</p>;
+  if (error) return <p className="text-red-600">{navigate(-1)} </p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 py-10">
-      <div className="max-w-4xl mx-auto px-4">
+    <div className="max-w-4xl mx-auto p-4">
+      <Link
+        to={`/upload-lesson/${subjectId}`}
+        className="text-blue-600 hover:underline"
+      >
+        ← Back to lessons
+      </Link>
 
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-semibold">Lessons</h1>
-          <Link
-            to={`/subject-teacher/${id}`}
-            className="text-blue-600 hover:underline"
-          >
-            ← Back to Class
-          </Link>
-        </div>
+      <h2 className="text-2xl font-semibold mt-4 mb-2">
+        Lesson Details
+      </h2>
 
-        {subject?.lesson?.length > 0 ? (
-          <div className="space-y-4">
-            {subject.lesson.map((lesson) => (
-              <div
-                key={lesson._id}
-                className="bg-white p-6 rounded-lg shadow border"
-              >
-                <h2 className="text-lg font-medium text-gray-800">
-                  {lesson.title}
-                </h2>
+      
+      <p className="mb-2">
+        <strong>Title:</strong> {lesson.title}
+      </p>
 
-                <p className="text-sm text-gray-500 mt-2 whitespace-pre-line">
-                  {lesson.summary || "Summary is still generating..."}
-                </p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16">
-            <BookOpenIcon className="w-14 h-14 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No lessons found</p>
-          </div>
-        )}
+      <p className="mb-4">
+        <strong>Status:</strong> {lesson.summaryStatus}
+      </p>
+
+      {/* ✅ Properly aligned AI summary */}
+      <div className="mt-4">
+        <strong>Description:</strong>
+        <p className="text-justify leading-relaxed whitespace-pre-line mt-2">
+          {lesson.summary}
+        </p>
       </div>
+
+      {lesson.content && (
+        <div className="mt-6">
+          <strong>Content:</strong>
+          <p className="leading-relaxed whitespace-pre-line mt-2">
+            {lesson.content}
+          </p>
+        </div>
+      ) }
     </div>
   );
 }
+
+export default ViewLesson;

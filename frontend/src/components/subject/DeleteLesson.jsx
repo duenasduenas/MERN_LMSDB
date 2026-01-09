@@ -1,7 +1,8 @@
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 const DeleteLesson = ({ subjectId, lessonId, onDeleted }) => {
-
+  const navigate = useNavigate()   
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this lesson?")) return;
 
@@ -19,6 +20,7 @@ const DeleteLesson = ({ subjectId, lessonId, onDeleted }) => {
 
       // 🔥 Notify parent component
       if (onDeleted) onDeleted(lessonId);
+      navigate(-1)
 
     } catch (error) {
       console.error(error.response?.data || error.message);

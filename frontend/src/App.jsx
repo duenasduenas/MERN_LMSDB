@@ -35,7 +35,7 @@ function App() {
         <Route path="/enrolled-students/:id" element={ <EnrolledStudents /> }/>
 
         {/* View Lesson Routes */}
-        <Route path="/view-lesson/:id" element={ <ViewLesson /> }/>
+        <Route path="/:subjectId/view-lesson/:lessonId" element={ <ViewLesson /> }/>
 
         {/* teacher route */}
         <Route path="/teacher/dashboard" element={<RoleGuard allowedRoles={"teacher"}> <TeacherDashboard /> </RoleGuard>}/>

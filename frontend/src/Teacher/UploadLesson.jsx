@@ -5,7 +5,7 @@ import { Link } from "react-router";
 import DeleteLesson from "../components/subject/deleteLesson";
 
 const UploadLesson = () => {
-  const { id } = useParams(); // subjectId
+  const { id, lessonId, subjectId } = useParams(); // subjectId
   const navigate = useNavigate();
 
   const [subject, setSubject] = useState(null);
@@ -15,7 +15,7 @@ const UploadLesson = () => {
   const [files, setFiles] = useState([]);
   const [updating, setUpdating] = useState(false);
 
-  // 🔹 FETCH SUBJECT DETAILS
+  //  FETCH SUBJECT DETAILS
   useEffect(() => {
     const fetchSubject = async () => {
       try {
@@ -40,7 +40,7 @@ const UploadLesson = () => {
     fetchSubject();
   }, [id]);
 
-  // 🔹 UPLOAD LESSON
+  //  UPLOAD LESSON
   const handleUpload = async (e) => {
     e.preventDefault();
     setUpdating(true);
@@ -68,8 +68,14 @@ const UploadLesson = () => {
 
       console.log(res.data);
       alert("Lesson uploaded. Summarization in progress.");
+      if(!updating){
+        alert('Uploading Please Wait')
 
-      navigate(-1); // go back
+        setInterval(function(){
+            window.location.reload();
+        }, 4000);
+
+      }
 
     } catch (error) {
       console.error(error.response?.data || error.message);
@@ -146,7 +152,7 @@ const UploadLesson = () => {
 
            <Link
             key={lesson._id}
-            to={`/view-lesson/${id}`}
+            to={`/${subject._id}/view-lesson/${lesson._id}`}
            >
                <div
               key={lesson._id}
@@ -166,6 +172,7 @@ const UploadLesson = () => {
                       }`}
                     >
                       {lesson.summaryStatus}
+
                     </span>
                   </p>
                 </div>

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { UsersIcon, TrashIcon } from "lucide-react";
 import { Link } from "react-router";
+import removeStudent from "../components/RemoveStudent.jsx";
 
 export default function EnrolledStudents() {
     const {id} = useParams()
@@ -29,6 +30,13 @@ export default function EnrolledStudents() {
         fetchSubject();
 
     }, [id])
+
+    const handleRemoveLocal = (studentId) => {
+    setSubject((prev) => ({
+        ...prev,
+        student: prev.student.filter((s) => s._id !== studentId),
+      }));
+    };
 
     if (loading) {
     return (

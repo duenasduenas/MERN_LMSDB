@@ -29,19 +29,26 @@ def chunk_text(text: str, max_chunk_length: int = 2500) -> list:
 
 def build_prompt(query, context):
     return f"""
-        You are an academic tutor.
+You are an academic tutor.
 
-        Task:
-        {query}
+Task:
+{query}
 
-        Context:
-        {context}
+Context:
+{context}
 
-        Rules:
-        - Use simple language
-        - Use bullet points
-        - No hallucinations
-        """
+Rules:
+- Use simple language
+- Use bullet points with hyphens (-) ONLY
+- Do NOT use asterisks (*)
+- Do NOT use markdown formatting
+- No hallucinations
+
+Format example:
+- First point
+- Second point
+- Third point
+"""
 
 
 def rag_summarize(document_text: str, query: str) -> str:
