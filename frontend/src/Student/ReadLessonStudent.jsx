@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function ViewLesson() {
+function ReadLessonStudent() {
   const { subjectId, lessonId } = useParams();
 
   const [lesson, setLesson] = useState(null);
@@ -40,7 +40,7 @@ function ViewLesson() {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <Link
-        to={`/upload-lesson/${subjectId}`}
+        to={`/subject-student/${subjectId}`}
         className="text-blue-600 hover:underline"
       >
         ← Back to lessons
@@ -79,4 +79,4 @@ function ViewLesson() {
   );
 }
 
-export default ViewLesson;
+export default ReadLessonStudent;

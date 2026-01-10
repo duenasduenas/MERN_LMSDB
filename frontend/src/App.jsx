@@ -22,6 +22,8 @@ import SubmitActivty from "./Student/SubmitActivity";
 import UploadLesson from "./Teacher/UploadLesson";
 import  EnrolledStudents  from "./Teacher/EnrolledStudents";
 import ViewLesson from "./components/lesson/ViewLesson";
+import ViewLessonStudent from "./Student/ViewLessonStudent";
+import ReadLessonStudent from "./Student/ReadLessonStudent";
 
 function App() {
   return (
@@ -30,6 +32,9 @@ function App() {
         {/* student route */}
         <Route path="/student/dashboard" element={<RoleGuard allowedRoles={"student"}> <StudentDashboard /> </RoleGuard>}/>
         <Route path="/signup/student" element={<StudentSignup />} />
+        <Route path="/:id/lesson-student" element={ <ViewLessonStudent /> }/>
+        <Route path="/:subjectId/read-lesson-student/:lessonId" element={<ReadLessonStudent/>}/>
+        
 
         {/* View Students Routes */}
         <Route path="/enrolled-students/:id" element={ <EnrolledStudents /> }/>

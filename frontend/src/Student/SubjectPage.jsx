@@ -5,7 +5,7 @@ import { BookOpenIcon, UserIcon, ArrowLeftIcon, LogOutIcon, PenSquareIcon } from
 import RemoveSubject from "../components/RemoveSubject";
 
 function SubjectPage() {
-  const { id } = useParams();
+  const { id, subjectId, lessonId } = useParams();
   const [subject, setSubject] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -26,7 +26,7 @@ function SubjectPage() {
     };
 
     fetchSubject();
-  }, [id]);
+  }, [id], [subjectId], [lessonId]);
 
   if (loading) {
     return (
@@ -80,6 +80,10 @@ function SubjectPage() {
             <UserIcon className="w-5 h-5 mr-2" />
             <span className="font-medium">Teacher: {subject.teacher?.name || subject.teacher || "N/A"}</span>
           </div>
+        </div>
+
+        <div>
+          <Link to={`/${id}/lesson-student`}> View Lesson </Link>
         </div>
 
         {/* Class Stream Placeholder */}
