@@ -1,6 +1,6 @@
 import axios from "axios";
 import { Link, useParams } from "react-router-dom";
-import { PenSquareIcon, BookOpenIcon, UsersIcon, ArrowLeftIcon, TrashIcon, CheckIcon, XIcon } from "lucide-react";
+import { PenSquareIcon, BookOpenIcon, UsersIcon, ArrowLeftIcon, TrashIcon, CheckIcon, XIcon, UploadIcon, EyeIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import ToggleEnrollement from "../components/ToggleEnrollment.jsx";
 import removeStudent from "../components/RemoveStudent.jsx";
@@ -37,8 +37,6 @@ function SubjectCard() {
 
     fetchSubject();
   }, [id]);
-
-  
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
@@ -108,72 +106,119 @@ function SubjectCard() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Subject Info Card */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8 flex items-start gap-4">
-          <BookOpenIcon className="w-10 h-10 text-blue-600 mt-1" />
-          <div className="flex-1">
-            {editing ? (
-              <form onSubmit={handleEditSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subject Name</label>
-                  <input
-                    type="text"
-                    value={editForm.subject}
-                    onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Subject Code</label>
-                  <input
-                    type="text"
-                    value={editForm.code}
-                    onChange={(e) => setEditForm({ ...editForm, code: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    type="submit"
-                    disabled={updating}
-                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
-                  >
-                    <CheckIcon className="w-5 h-5 mr-2" /> {updating ? "Updating..." : "Save"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditing(false)}
-                    className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
-                  >
-                    <XIcon className="w-5 h-5 mr-2" /> Cancel
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <>
-                <h2 className="text-3xl font-bold text-gray-900">{subject.subject}</h2>
-                <p className="text-gray-600">Subject Code: {subject.code}</p>
-                {subject._id && <ToggleEnrollement subjectId={subject._id} />}
-              </>
-            )}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <BookOpenIcon className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="flex-1">
+              {editing ? (
+                <form onSubmit={handleEditSubmit} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subject Name</label>
+                    <input
+                      type="text"
+                      value={editForm.subject}
+                      onChange={(e) => setEditForm({ ...editForm, subject: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subject Code</label>
+                    <input
+                      type="text"
+                      value={editForm.code}
+                      onChange={(e) => setEditForm({ ...editForm, code: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={updating}
+                      className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                    >
+                      <CheckIcon className="w-5 h-5 mr-2" /> {updating ? "Updating..." : "Save"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditing(false)}
+                      className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                    >
+                      <XIcon className="w-5 h-5 mr-2" /> Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between mb-2">
+                    <h2 className="text-3xl font-bold text-gray-900">{subject.subject}</h2>
+                    <button
+                      onClick={() => setEditing(true)}
+                      className="inline-flex items-center px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 transition"
+                    >
+                      <PenSquareIcon className="w-4 h-4 mr-1" /> Edit
+                    </button>
+                  </div>
+                  <p className="text-gray-600 mb-4">Subject Code: {subject.code}</p>
+                  {subject._id && <ToggleEnrollement subjectId={subject._id} />}
+                </>
+              )}
+            </div>
           </div>
         </div>
 
-        <div>
-          <Link to={`/upload-lesson/${id}`}> Upload a lesson </Link>
-          <Link to={`/enrolled-students/${id}`}> See Enrolled Students </Link>
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link
+            to={`/upload-lesson/${id}`}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 block"
+          >
+            <div className="flex items-center">
+              <UploadIcon className="w-10 h-10 text-blue-600 mr-4" />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Upload Lesson</h3>
+                <p className="text-gray-600">Add new lessons for students</p>
+              </div>
+            </div>
+          </Link>
+          <Link
+            to={`/enrolled-students/${id}`}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 block"
+          >
+            <div className="flex items-center">
+              <EyeIcon className="w-10 h-10 text-green-600 mr-4" />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Enrolled Students</h3>
+                <p className="text-gray-600">View and manage students</p>
+              </div>
+            </div>
+          </Link>
+          <Link
+            to={`/create-activity/${subject._id}`}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 block"
+          >
+            <div className="flex items-center">
+              <PenSquareIcon className="w-10 h-10 text-purple-600 mr-4" />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Create Activity</h3>
+                <p className="text-gray-600">Assign tasks to students</p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Students Section */}
-        {/* <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center mb-6 gap-2">
-            <UsersIcon className="w-6 h-6 text-gray-600" />
-            <h3 className="text-2xl font-semibold text-gray-900">Enrolled Students</h3>
-          </div>
-          {subject.student && subject.student.length > 0 ? (
+        {subject.student && subject.student.length > 0 && (
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center mb-6 gap-2">
+              <UsersIcon className="w-6 h-6 text-gray-600" />
+              <h3 className="text-2xl font-semibold text-gray-900">Enrolled Students</h3>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {subject.student.map((stud) => (
                 <div
@@ -195,30 +240,16 @@ function SubjectCard() {
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="text-center py-12">
-              <UsersIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg">No students enrolled yet.</p>
-              <p className="text-gray-400 mt-2">Share the subject code to let students join.</p>
-            </div>
-          )}
-        </div> */}
+          </div>
+        )}
 
         {/* Activities Section */}
-        <section className="bg-white rounded-lg shadow-md p-6">
+        <section className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div className="flex items-center gap-2">
               <BookOpenIcon className="w-6 h-6 text-blue-600" />
               <h3 className="text-2xl font-semibold text-gray-900">Classwork</h3>
             </div>
-            {subject._id && (
-              <Link
-                to={`/create-activity/${subject._id}`}
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-              >
-                <PenSquareIcon className="w-5 h-5 mr-2" /> Create Activity
-              </Link>
-            )}
           </div>
 
           {subject.activity && subject.activity.length > 0 ? (
@@ -227,31 +258,28 @@ function SubjectCard() {
                 <Link
                   key={act._id}
                   to={`/activity/${act._id}`}
-                  className="group block border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition"
+                  className="group block bg-gray-50 rounded-lg hover:bg-blue-50 border border-gray-200 hover:border-blue-300 transition-all duration-200 p-4"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                         <BookOpenIcon className="w-5 h-5 text-blue-600" />
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <p className="font-medium text-gray-900 group-hover:text-blue-600">{act.activity}</p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-500">
                           Posted {new Date(act.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    
-                      <div className="flex flex-row gap-2">
-                          <DeleteActivity
-                            activityId={act._id}
-                            onDelete={handleDeleteActivity}
-                          />
-                          <span className="text-sm font-medium text-blue-600  sm:self-auto">View activity</span>
-                      </div>
-
+                    <div className="flex items-center gap-2">
+                      <DeleteActivity
+                        activityId={act._id}
+                        onDelete={handleDeleteActivity}
+                      />
+                      <span className="text-sm font-medium text-blue-600">View activity</span>
+                    </div>
                   </div>
-
                 </Link>
               ))}
             </div>

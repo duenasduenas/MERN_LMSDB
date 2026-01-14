@@ -9,7 +9,7 @@ const submitSchema = new mongoose.Schema({
 
     student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Studnet",
+        ref: "Student",
         required: true
     },
 
@@ -32,6 +32,8 @@ const submitSchema = new mongoose.Schema({
     feedback: String
 
 }, {timestamps: String})
+
+submitSchema.index({ activity: 1, student: 1 }, { unique: true });
 
 const Submitted = mongoose.model("Submitted", submitSchema)
 

@@ -18,7 +18,7 @@ export const submitActivity = async (req, res) => {
     }
 
     // 2️⃣ Check if student is assigned to this activity
-    const isAssigned = activity.students.some(
+    const isAssigned = activity.student.some(
       (id) => id.toString() === studentId
     );
 
@@ -26,13 +26,25 @@ export const submitActivity = async (req, res) => {
       return res.status(403).json({ message: "You are not assigned to this activity" });
     }
 
-    // 3️⃣ Determine submission status
-    let status = "submitted";
-    if (activity.dueDate && new Date() > activity.dueDate) {
-      status = "late";
+    // 3️⃣ Check for existing submission ✅ ADD THIS
+    const existingSubmission = await Submission.findOne({
+      activity: activityId,
+      student: studentId
+    });
+
+    if (existingSubmission) {
+      return res.status(409).json({
+        message: "You have already submitted this activity"
+      });
     }
 
-    // 4️⃣ Create submission
+    // 4️⃣ Determine submission status
+    let status = "Submitted";
+    if (activity.dueDate && new Date() > activity.dueDate) {
+      status = "Late";
+    }
+
+    // 5️⃣ Create submission
     const submission = await Submission.create({
       activity: activityId,
       student: studentId,
@@ -46,14 +58,6 @@ export const submitActivity = async (req, res) => {
     });
 
   } catch (error) {
-
-    // Duplicate submission error
-    if (error.code === 11000) {
-      return res.status(409).json({
-        message: "You have already submitted this activity"
-      });
-    }
-
     res.status(500).json({
       error: error.message
     });

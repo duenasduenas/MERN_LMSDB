@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { BookOpenIcon, UserIcon, ArrowLeftIcon, LogOutIcon, PenSquareIcon } from "lucide-react";
+import { BookOpenIcon, UserIcon, ArrowLeftIcon, LogOutIcon, PenSquareIcon, CalendarIcon, CheckCircleIcon } from "lucide-react";
 import RemoveSubject from "../components/RemoveSubject";
 
 function SubjectPage() {
@@ -26,7 +26,7 @@ function SubjectPage() {
     };
 
     fetchSubject();
-  }, [id], [subjectId], [lessonId]);
+  }, [id, subjectId, lessonId]); // Fixed: Combined dependencies into a single array
 
   if (loading) {
     return (
@@ -68,9 +68,11 @@ function SubjectPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Subject Header */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex items-center mb-4">
-            <BookOpenIcon className="w-12 h-12 text-blue-600 mr-4" />
+            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+              <BookOpenIcon className="w-8 h-8 text-blue-600" />
+            </div>
             <div>
               <h2 className="text-3xl font-bold text-gray-900">{subject.subject}</h2>
               <p className="text-gray-600">Subject Code: {subject.code}</p>
@@ -82,13 +84,38 @@ function SubjectPage() {
           </div>
         </div>
 
-        <div>
-          <Link to={`/${id}/lesson-student`}> View Lesson </Link>
+        {/* Quick Actions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <Link
+            to={`/${id}/lesson-student`}
+            className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200 block"
+          >
+            <div className="flex items-center">
+              <BookOpenIcon className="w-10 h-10 text-blue-600 mr-4" />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">View Lessons</h3>
+                <p className="text-gray-600">Access and read your lessons</p>
+              </div>
+            </div>
+          </Link>
+          {/* Placeholder for another action if needed */}
+          {/* <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center">
+              <PenSquareIcon className="w-10 h-10 text-green-600 mr-4" />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Assignments</h3>
+                <p className="text-gray-600">View and submit assignments</p>
+              </div>
+            </div>
+          </div> */}
         </div>
 
-        {/* Class Stream Placeholder */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Class Stream</h3>
+        {/* Class Stream */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+            <BookOpenIcon className="w-6 h-6 mr-2 text-blue-600" />
+            Class Stream
+          </h3>
           <div className="text-center py-12">
             <BookOpenIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-500 text-lg">No announcements yet.</p>
@@ -96,43 +123,49 @@ function SubjectPage() {
           </div>
         </div>
 
+        {/* Activities */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+            <PenSquareIcon className="w-6 h-6 mr-2 text-green-600" />
+            Activities
+          </h3>
           {subject.activity && subject.activity.length > 0 ? (
             <div className="space-y-4">
               {subject.activity.map((act) => (
                 <Link
                   key={act._id}
                   to={`/submit-activity/${act._id}`}
-                  className="group block border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-sm transition"
+                  className="group block bg-gray-50 rounded-lg hover:bg-blue-50 border border-gray-200 hover:border-blue-300 transition-all duration-200 p-4"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <BookOpenIcon className="w-5 h-5 text-blue-600" />
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <PenSquareIcon className="w-5 h-5 text-blue-600" />
                       </div>
-                      <div>
+                      <div className="flex-1">
                         <p className="font-medium text-gray-900 group-hover:text-blue-600">{act.activity}</p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                          <CalendarIcon className="w-4 h-4 mr-1" />
                           Posted {new Date(act.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
-                    
-
+                    <div className="flex items-center text-sm text-gray-600">
+                      <CheckCircleIcon className="w-4 h-4 mr-1" />
+                      Submit Activity
+                    </div>
                   </div>
-
                 </Link>
               ))}
             </div>
           ) : (
             <div className="text-center py-12">
-              <BookOpenIcon className="w-14 h-14 text-gray-400 mx-auto mb-4" />
+              <PenSquareIcon className="w-14 h-14 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500 text-lg">No activities yet</p>
-              <p className="text-gray-400 mt-1">Create an activity to start classwork</p>
+              <p className="text-gray-400 mt-1">Your teacher will post activities here</p>
             </div>
           )}
-
-
-
+        </div>
       </main>
     </div>
   );
